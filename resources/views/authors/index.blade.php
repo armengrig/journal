@@ -19,7 +19,6 @@
            <tbody>
                 @foreach($authors as $author)
                     <tr>
-
                         <td>{{ $author->first_name }}</td>
                         <td>{{ $author->last_name }}</td>
                         <td>{{ $author->father_land }}</td>
@@ -34,7 +33,6 @@
            </tbody>
        </table>
     </div>
-
 
     <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">

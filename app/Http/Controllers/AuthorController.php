@@ -17,7 +17,8 @@ class AuthorController extends Controller
     public function index()
     {
         $authors = Author::with('journals')->get();
-        return view('authors.index',compact('authors'));
+
+        return view('authors.index', compact('authors'));
     }
 
     /**
@@ -52,12 +53,13 @@ class AuthorController extends Controller
         }
 
         $author = Author::create($data);
-        if($author){
+
+        if($author) {
             return response()->json([
                 'status' => 'success',
             ],200);
         }
-        else{
+        else {
             return response()->json([
                 'status' => 'error'
             ],400);
@@ -73,7 +75,8 @@ class AuthorController extends Controller
     public function show($id)
     {
         $author = Author::with('journals')->find($id);
-        return view('authors.show',compact('author'));
+
+        return view('authors.show', compact('author'));
     }
 
     /**
@@ -85,9 +88,10 @@ class AuthorController extends Controller
     public function edit($id)
     {
         $author = Author::find($id);
-        if($author){
-            return view('authors.edit',compact('author'));
-        }else{
+        if($author) {
+            return view('authors.edit', compact('author'));
+        }
+        else {
             return abort(404);
         }
     }
@@ -102,6 +106,7 @@ class AuthorController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
+
         $validator = Validator::make($data, [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -114,9 +119,11 @@ class AuthorController extends Controller
         }
 
         $author = Author::find($id);
+
         if($author){
             $author->fill($data);
             $update = $author->save();
+
             if($update){
                 return response()->json([
                     'status' => 'success',
@@ -127,7 +134,6 @@ class AuthorController extends Controller
         return response()->json([
             'status' => 'error',
         ],400);
-
     }
 
     /**
@@ -142,6 +148,7 @@ class AuthorController extends Controller
 
         if($author){
             $deleting = $author->delete();
+
             if($deleting){
                 return response()->json([
                     'status' => 'success',
@@ -152,6 +159,5 @@ class AuthorController extends Controller
         return response()->json([
             'status' => 'error',
         ],400);
-
     }
 }

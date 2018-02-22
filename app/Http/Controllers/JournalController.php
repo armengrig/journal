@@ -20,7 +20,8 @@ class JournalController extends Controller
     public function index()
     {
         $journals = Journal::with('authors')->get();
-        return view('journals.index',compact('journals'));
+
+        return view('journals.index', compact('journals'));
     }
 
     /**
@@ -31,7 +32,8 @@ class JournalController extends Controller
     public function create()
     {
         $authors = Author::all();
-        return view('journals.create',compact('authors'));
+
+        return view('journals.create', compact('authors'));
     }
 
     /**
@@ -43,6 +45,7 @@ class JournalController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+
         $validator = Validator::make($data, [
             'name' => 'required',
             'image' => 'required|image|mimes:jpeg,jpg,png|max:2048',
@@ -55,17 +58,16 @@ class JournalController extends Controller
                 'error' => 'error',
             ],400);
         }
-        $ext = $request->image->extension();
-        $picture_name = $request->name.'-'.uniqid().'.'.$ext;
-        $request->file('image')->move('images/', $picture_name);
+
+        $picture_name = saveImage($request);
 
         $created_date = Carbon::parse($request->created_date)->format('Y-m-d');
         $data['image'] = $picture_name;
         $data['created_date'] = $created_date;
 
-
         $journal = Journal::create($data);
-        if($journal){
+
+        if($journal) {
             try {
                 $journal->authors()->attach($request->author);
                 return response()->json([
@@ -77,10 +79,10 @@ class JournalController extends Controller
                 ],400);
             }
         }
+
         return response()->json([
             'status' => 'error'
         ],400);
-
     }
 
     /**
@@ -92,9 +94,11 @@ class JournalController extends Controller
     public function show($id)
     {
         $journal = Journal::with('authors')->find($id);
-        if($journal){
+
+        if($journal) {
             return view('journals.show', compact('journal'));
-        }else{
+        }
+        else {
             return abort(404);
         }
     }
@@ -126,11 +130,12 @@ class JournalController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
+
         $validator = Validator::make($data, [
             'name' => 'required',
             'image' => 'image|mimes:jpeg,jpg,png|max:2048',
             'created_date' => 'required',
-            'author' => 'required',
+            'author' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -140,7 +145,8 @@ class JournalController extends Controller
         }
 
         $journal = Journal::with('authors')->find($id);
-        if($journal){
+
+        if($journal) {
             $created_date = Carbon::parse($request->created_date)->format('Y-m-d');
             $old_pic_name = $journal->image;
             $data['image'] = $old_pic_name;
@@ -154,39 +160,42 @@ class JournalController extends Controller
                     unlink($path);
                 };
 
-                $ext = $request->image->extension();
-                $picture_name = $request->name.'-'.uniqid().'.'.$ext;
-                $request->file('image')->move('images/', $picture_name);
+                $picture_name = saveImage($request);
+
                 $data['image'] = $picture_name;
             }
 
             $journal->fill($data);
             $update = $journal->save();
 
-            // detach from pivot table and attach new data
-            if($update){
+            // Detach from pivot table and attach new data
+            if($update) {
                 $old_authors = [];
-                foreach($journal->authors as $author){
+
+                foreach($journal->authors as $author) {
                     $old_authors[] = $author->id;
                 }
+
                 try{
                     $journal->authors()->detach($old_authors);
                     $journal->authors()->attach($request->author);
+
                     return response()->json([
                         'image' => $data['image'],
                         'status' => 'success',
                     ],200);
-                }catch (Exception $e){
+                }
+                catch (Exception $e) {
                     return response()->json([
                         'status' => 'error',
                     ],400);
                 }
             }
         }
+
         return response()->json([
             'status' => 'error',
         ],400);
-
     }
 
     /**
@@ -199,11 +208,11 @@ class JournalController extends Controller
     {
         $journal = Journal::find($id);
 
-        if($journal){
+        if($journal) {
             $deleting = $journal->delete();
-            if($deleting){
+            if($deleting) {
                 $path = public_path('images\\'.$journal->image);
-                if($journal->image){
+                if($journal->image) {
                     unlink($path);
                 }
 
@@ -216,6 +225,5 @@ class JournalController extends Controller
         return response()->json([
             'status' => 'error',
         ],400);
-
     }
 }

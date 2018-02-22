@@ -17,6 +17,8 @@ class Journal extends Model
     ];
 
     /**
+     * Get the authors that owns the journal.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function authors()

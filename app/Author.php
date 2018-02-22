@@ -7,11 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Author extends Model
 {
     protected $fillable = [
-        'first_name', 'last_name', 'father_land',
+        'first_name',
+        'last_name',
+        'father_land',
     ];
 
-    public function journals(){
-
+    /**
+     * Get the journals that belong to the author.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function journals()
+    {
         return $this->belongsToMany('App\Journal', 'journal_author', 'author_id', 'journal_id');
     }
 }

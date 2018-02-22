@@ -1,14 +1,11 @@
 @extends('layout.app')
 @section('content')
     <div class="container">
-        <div class="image" style="background-image: url(../../../images/{{ $journal->image }})">
-
-        </div>
+        <div class="image" style="background-image: url(../../../images/{{ $journal->image }})"></div>
         <div class="w-50">
             <div class="row">
                 <div class="col-6">Name</div>
                 <div class="col-6">{{ $journal->name }}</div>
-
             </div>
             <div class="row">
                 <div class="col-6">Authors</div>
@@ -19,7 +16,6 @@
                         </div>
                     @endforeach
                 </div>
-
             </div>
             <div class="row">
                 <div class="col-6">Description</div>
